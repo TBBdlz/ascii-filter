@@ -1,9 +1,9 @@
 ; @TODO add documentation here ;
 global _start
 section .data
-LF			equ		10 ; new line character
+LF		equ		10 ; new line character
 NULL		equ		0
-EXIT_SUCCESS		equ		0	
+EXIT_SUCCESS	equ		0	
 SYS_read	equ		0
 SYS_write	equ		1
 SYS_exit	equ		60
