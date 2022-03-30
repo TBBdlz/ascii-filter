@@ -1,5 +1,4 @@
 ; @TODO add documentation here ;
-global _start
 section .data
 LF		equ	10 ; line feed
 NULL		equ	0
@@ -29,12 +28,65 @@ S_IXUSR		equ	00100q
 newLine		db	LF, NULL
 inputFile	db	"test_input.dat", NULL
 outputFile	db	"output.dat", NULL
+fileDescriptor	dq	0
+errMsgOpen	db	"Error on opening file.", LF, NULL
+errMsgRead	db	"Error on reading file.", LF, NULL
+errMsgWrite	db	"Error on writing file.", LF, NULL
+BUFF_SIZE	equ	1023
+
+section .bss
+readBuffer	resb	1023
+filteredData	resb	1023
+
+; @TODO list
+; 1. Should add external assembly code
+; 2. Documentation is needed.
+; 3. Some function doesn't have body
+; 4. Need to create function to extract ascii character
 
 ; @TODO add documentation here ;
 section .text
-_start:
-	call readInputFile ; @TODO add body of function
-	call writeOutputFile ; @TODO add body of function
+; Attempt to open input file - Use system service for opening file ;
+openInputFile:
+	mov rax, SYS_open ; file open
+	mov rdi, inputFile ; move input file name to rdi
+	mov rsi, O_RDONLY ; read only access
+	syscall ; call system service for opening file
+	cmp rax, 0
+	jl errorOnOpen
+	mov qword[fileDescriptor], rax ; save file descriptor
+readInputFile:
+	mov rax, SYS_read
+	mov rdi, qword[fileDescriptor]
+	mov rsi, readBuffer
+	mov rdx, BUFF_SIZE
+	syscall
+	cmp rax, 0
+	jl errorOnRead
+closeInputFile:
+	mov rax, SYS_close
+	mov rdi, qword[fileDescriptor]
+	syscall
+openOutputFile:
+	mov rax, SYS_create
+	mov rdi, outputFile
+	mov rsi, S_IWUSR ; allow write
+	syscall ; call the kernel
+	cmp rax, 0
+	jl errorOnOpen
+	mov qword[fileDescriptor], rax ; save descriptor
+writeOutputFile:
+	mov rax, SYS_write
+	mov rdi, qword[fileDescriptor]
+	mov rsi, filteredData ; @TODO create function to extract data
+	mov rdx, len ; @TODO create function to get size of string
+	syscall
+	cmp rax, 0
+	jl errorOnWrite
+closeOutputFile: ; @TODO duplicate code should create function to close file
+	mov rax, SYS_close
+	mov rdi, qword[fileDescriptor]
+	syscall
 exit:
 	mov rax, SYS_exit
 	mov rdi, EXIT_SUCCESS
