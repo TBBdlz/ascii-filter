@@ -62,7 +62,7 @@ openInputFile:
 readInputFile:
 	mov rax, SYS_read
 	mov rdi, qword[fileDescriptor]
-	mov rsi, readBuffer
+	mov rsi, readBuffer ; content of input file goes here
 	mov rdx, BUFF_SIZE
 	syscall
 	cmp rax, 0
@@ -71,6 +71,9 @@ closeInputFile:
 	mov rax, SYS_close
 	mov rdi, qword[fileDescriptor]
 	syscall
+processInputData:
+	mov rdi, readBuffer
+	call getFilteredData ; @TODO add extern body of function
 openOutputFile:
 	mov rax, SYS_create
 	mov rdi, outputFile
@@ -93,9 +96,17 @@ closeOutputFile: ; @TODO duplicate code should create function to close file
 	syscall
 	jmp exit ; done running main program
 errorOnOpen:
-	
+	mov rdi, errMsgOpen
+	call printString
+	jmp exit	
 errorOnRead:
+	mov rdi, errMsgRead
+	call printString
+	jmp exit
 errorOnWrite:
+	mov rdi, errMsgWrite
+	call printString
+	jmp exit
 exit:
 	mov rax, SYS_exit
 	mov rdi, EXIT_SUCCESS
