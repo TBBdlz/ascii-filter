@@ -24,6 +24,6 @@ strCountDone:
 	mov	rsi, rdi ; Put argument ready to print out
 	mov	rdi, STDOUT
 	syscall
-printDone
+printDone:
 	pop	rbx
 	ret
