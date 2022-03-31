@@ -7,6 +7,7 @@ STDOUT		equ	1
 
 section .text
 global printString
+printString:
 	push	rbx
 	mov	rbx, rdi
 	mov	rdx, 0
