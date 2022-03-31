@@ -43,6 +43,10 @@ filteredData	resb	1023
 ; 2. Documentation is needed.
 ; 3. Some function doesn't have body
 ; 4. Need to create function to extract ascii character
+; 5. Add extern function here
+
+extern printString
+extern getFilteredData
 
 ; @TODO add documentation here ;
 section .text
@@ -87,6 +91,11 @@ closeOutputFile: ; @TODO duplicate code should create function to close file
 	mov rax, SYS_close
 	mov rdi, qword[fileDescriptor]
 	syscall
+	jmp exit ; done running main program
+errorOnOpen:
+	
+errorOnRead:
+errorOnWrite:
 exit:
 	mov rax, SYS_exit
 	mov rdi, EXIT_SUCCESS
