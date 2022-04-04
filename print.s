@@ -8,8 +8,10 @@ STDOUT		equ	1
 section .text
 global printString
 printString:
-	push	rbx
-	mov	rbx, rdi
+	push	rbp
+	mov	rbp, rsp
+	push rbx
+	mov rbx, rdi
 	mov	rdx, 0
 strCountLoop:
 	cmp	byte[rbx], 0
@@ -26,4 +28,5 @@ strCountDone:
 	syscall
 printDone:
 	pop	rbx
+	pop rbp
 	ret

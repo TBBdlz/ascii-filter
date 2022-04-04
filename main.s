@@ -50,6 +50,14 @@ extern getFilteredData
 
 ; @TODO add documentation here ;
 section .text
+global main
+main:
+	cmp rdi, 3
+	jne errorOnArg
+	r12, qword[rsi + 8]
+	qword[inputFile], r12
+	r12, qword[rsi + 16]
+	qword[outputFile], r12
 ; Attempt to open input file - Use system service for opening file ;
 openInputFile:
 	mov rax, SYS_open ; file open
