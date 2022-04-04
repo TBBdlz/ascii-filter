@@ -32,6 +32,8 @@ fileDescriptor	dq	0
 errMsgOpen	db	"Error on opening file.", LF, NULL
 errMsgRead	db	"Error on reading file.", LF, NULL
 errMsgWrite	db	"Error on writing file.", LF, NULL
+errMsgArgs	db	"Invalid Args.", LF, NULL
+msgFinish	db	"Finish!!!!", LF, NULL
 BUFF_SIZE	equ	1023
 
 section .bss
@@ -52,21 +54,26 @@ extern getFilteredData
 section .text
 global main
 main:
+	;check count args
 	cmp rdi, 3
-	jne errorOnArg
+	jne errorOnArgs
+
+	;get input file and output file
 	r12, qword[rsi + 8]
 	qword[inputFile], r12
 	r12, qword[rsi + 16]
 	qword[outputFile], r12
+
 ; Attempt to open input file - Use system service for opening file ;
 openInputFile:
-	mov rax, SYS_open ; file open
-	mov rdi, inputFile ; move input file name to rdi
-	mov rsi, O_RDONLY ; read only access
-	syscall ; call system service for opening file
+	mov rax, SYS_open 			; file open
+	mov rdi, qword[inputFile]	; move input file name to rdi
+	mov rsi, O_RDONLY 			; read only access
+	syscall 					; call system service for opening file
 	cmp rax, 0
 	jl errorOnOpen
 	mov qword[fileDescriptor], rax ; save file descriptor
+
 readInputFile:
 	mov rax, SYS_read
 	mov rdi, qword[fileDescriptor]
@@ -75,21 +82,25 @@ readInputFile:
 	syscall
 	cmp rax, 0
 	jl errorOnRead
+
 closeInputFile:
 	mov rax, SYS_close
 	mov rdi, qword[fileDescriptor]
 	syscall
+	
 processInputData:
 	mov rdi, readBuffer
 	call getFilteredData ; @TODO add extern body of function
+
 openOutputFile:
 	mov rax, SYS_create
-	mov rdi, outputFile
+	mov rdi, qword[outputFile]
 	mov rsi, S_IWUSR ; allow write
 	syscall ; call the kernel
 	cmp rax, 0
 	jl errorOnOpen
 	mov qword[fileDescriptor], rax ; save descriptor
+	
 writeOutputFile:
 	mov rax, SYS_write
 	mov rdi, qword[fileDescriptor]
@@ -98,23 +109,36 @@ writeOutputFile:
 	syscall
 	cmp rax, 0
 	jl errorOnWrite
+
 closeOutputFile: ; @TODO duplicate code should create function to close file
 	mov rax, SYS_close
 	mov rdi, qword[fileDescriptor]
 	syscall
+
+	mov rdi, magFinish
+	call printString
 	jmp exit ; done running main program
+
 errorOnOpen:
 	mov rdi, errMsgOpen
 	call printString
 	jmp exit	
+
 errorOnRead:
 	mov rdi, errMsgRead
 	call printString
 	jmp exit
+	
 errorOnWrite:
 	mov rdi, errMsgWrite
 	call printString
 	jmp exit
+
+errorOnWrite:
+	mov rdi, errMsgArgs
+	call printString
+	jmp exit
+
 exit:
 	mov rax, SYS_exit
 	mov rdi, EXIT_SUCCESS
