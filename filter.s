@@ -25,6 +25,7 @@ validAscii:
 	inc r12 ; move memory up by 1
 	jmp filterCountLoop
 next:
+	inc rbp
 	jmp filterCountLoop
 filterDone:
 	mov rax, r12 ; move result to rax to return
