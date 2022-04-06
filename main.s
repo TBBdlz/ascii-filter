@@ -64,7 +64,7 @@ main:
 	r12, qword[rsi + 16]
 	qword[outputFile], r12
 
-; Attempt to open input file - Use system service for opening file ;
+; Attempt to open input file - Use system service for opening file
 openInputFile:
 	mov rax, SYS_open 			; file open
 	mov rdi, qword[inputFile]	; move input file name to rdi
@@ -100,7 +100,7 @@ openOutputFile:
 	cmp rax, 0
 	jl errorOnOpen
 	mov qword[fileDescriptor], rax ; save descriptor
-	
+
 writeOutputFile:
 	mov rax, SYS_write
 	mov rdi, qword[fileDescriptor]
@@ -134,7 +134,7 @@ errorOnWrite:
 	call printString
 	jmp exit
 
-errorOnWrite:
+errorOnArgs:
 	mov rdi, errMsgArgs
 	call printString
 	jmp exit
