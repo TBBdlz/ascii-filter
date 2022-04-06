@@ -116,7 +116,7 @@ closeOutputFile: ; @TODO duplicate code should create function to close file
 	mov rdi, qword[fileDescriptor]
 	syscall
 
-	mov rdi, magFinish
+	mov rdi, msgFinish
 	call printString
 	jmp exit ; done running main program
 
