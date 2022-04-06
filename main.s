@@ -90,7 +90,8 @@ closeInputFile:
 	
 processInputData:
 	mov rdi, readBuffer
-	call getFilteredData ; @TODO add extern body of function
+	call getFilteredData ; rax is filtered data from the function
+	mov byte[filteredData], rax 
 
 openOutputFile:
 	mov rax, SYS_create
