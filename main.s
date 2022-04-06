@@ -59,10 +59,10 @@ main:
 	jne errorOnArgs
 
 	;get input file and output file
-	r12, qword[rsi + 8]
-	qword[inputFile], r12
-	r12, qword[rsi + 16]
-	qword[outputFile], r12
+	mov r12, qword[rsi + 8]
+	mov qword[inputFile], r12
+	mov r12, qword[rsi + 16]
+	mov qword[outputFile], r12
 
 ; Attempt to open input file - Use system service for opening file
 openInputFile:
@@ -106,7 +106,7 @@ writeOutputFile:
 	mov rax, SYS_write
 	mov rdi, qword[fileDescriptor]
 	mov rsi, filteredData ; @TODO create function to extract data
-	mov rdx, len ; @TODO create function to get size of string
+	mov rdx, len ; @TODO create function to get size of string(No symbol)
 	syscall
 	cmp rax, 0
 	jl errorOnWrite
