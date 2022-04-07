@@ -1,6 +1,6 @@
 ; @TODO add documentation here ;
 section .data
-LF		equ	10 ; line feed
+LF			equ	10 ; line feed
 NULL		equ	0
 TRUE		equ	1
 FALSE		equ	0
@@ -37,8 +37,8 @@ msgFinish	db	"Finish!!!!", LF, NULL
 BUFF_SIZE	equ	1023
 
 section .bss
-readBuffer	resb	1023
-filteredData	resb	1023
+readBuffer		resb	BUFF_SIZE
+filteredData	resb	BUFF_SIZE
 
 ; @TODO list
 ; 1. Should add external assembly code
@@ -54,6 +54,7 @@ extern getFilteredData
 section .text
 global main
 main:
+
 	;check count args
 	cmp rdi, 3
 	jne errorOnArgs
@@ -93,7 +94,7 @@ processInputData:
 	call getFilteredData ; rax is filtered data from the function
 	mov byte[filteredData], rax 
 
-openOutputFile:
+createOutputFile:
 	mov rax, SYS_create
 	mov rdi, qword[outputFile]
 	mov rsi, S_IWUSR ; allow write
