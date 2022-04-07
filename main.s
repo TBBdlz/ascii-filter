@@ -34,18 +34,12 @@ errMsgRead	db	"Error on reading file.", LF, NULL
 errMsgWrite	db	"Error on writing file.", LF, NULL
 errMsgArgs	db	"Invalid Args.", LF, NULL
 msgFinish	db	"Finish!!!!", LF, NULL
+lenRes		db	0
 BUFF_SIZE	equ	1023
 
 section .bss
 readBuffer	resb	1023
 filteredData	resb	1023
-
-; @TODO list
-; 1. Should add external assembly code
-; 2. Documentation is needed.
-; 3. Some function doesn't have body
-; 4. Need to create function to extract ascii character
-; 5. Add extern function here
 
 extern printString
 extern getFilteredData
@@ -91,7 +85,8 @@ closeInputFile:
 processInputData:
 	mov rdi, readBuffer
 	call getFilteredData ; rax is filtered data from the function
-	mov byte[filteredData], rax 
+	mov byte[filteredData], rax
+	mov byte[lenResult], rbx
 
 openOutputFile:
 	mov rax, SYS_create
@@ -105,8 +100,8 @@ openOutputFile:
 writeOutputFile:
 	mov rax, SYS_write
 	mov rdi, qword[fileDescriptor]
-	mov rsi, filteredData ; @TODO create function to extract data
-	mov rdx, len ; @TODO create function to get size of string
+	mov rsi, filteredData 
+	mov rdx, lenResult
 	syscall
 	cmp rax, 0
 	jl errorOnWrite
