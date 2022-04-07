@@ -53,12 +53,12 @@ main:
 	jne errorOnArgs
 
 	;get input file and output file
-	r12, qword[rsi + 8]
-	qword[inputFile], r12
-	r12, qword[rsi + 16]
-	qword[outputFile], r12
+	mov r12, qword[rsi + 8]
+	mov qword[inputFile], r12
+	mov r12, qword[rsi + 16]
+	mov qword[outputFile], r12
 
-; Attempt to open input file - Use system service for opening file ;
+; Attempt to open input file - Use system service for opening file
 openInputFile:
 	mov rax, SYS_open 			; file open
 	mov rdi, qword[inputFile]	; move input file name to rdi
@@ -96,7 +96,7 @@ openOutputFile:
 	cmp rax, 0
 	jl errorOnOpen
 	mov qword[fileDescriptor], rax ; save descriptor
-	
+
 writeOutputFile:
 	mov rax, SYS_write
 	mov rdi, qword[fileDescriptor]
@@ -111,7 +111,7 @@ closeOutputFile: ; @TODO duplicate code should create function to close file
 	mov rdi, qword[fileDescriptor]
 	syscall
 
-	mov rdi, magFinish
+	mov rdi, msgFinish
 	call printString
 	jmp exit ; done running main program
 
@@ -130,7 +130,7 @@ errorOnWrite:
 	call printString
 	jmp exit
 
-errorOnWrite:
+errorOnArgs:
 	mov rdi, errMsgArgs
 	call printString
 	jmp exit
