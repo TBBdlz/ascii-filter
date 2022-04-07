@@ -91,7 +91,7 @@ processInputData:
 createOutputFile:
 	mov rax, SYS_create
 	mov rdi, qword[outputFile]
-	mov rsi, S_IWUSR ; allow write
+	mov rsi, S_IWUSR | S_IRUSR; allow write and read
 	syscall ; call the kernel
 	cmp rax, 0
 	jl errorOnOpen
@@ -164,5 +164,4 @@ next:
         jmp filterCountLoop
 filterDone:
         mov rax, 0
-        pop rbp
         ret ; return result string to rax

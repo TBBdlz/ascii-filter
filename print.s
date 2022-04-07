@@ -8,8 +8,6 @@ STDOUT		equ	1
 section .text
 global printString
 printString:
-	push	rbp
-	mov	rbp, rsp
 	push rbx
 	mov rbx, rdi
 	mov	rdx, 0
@@ -28,5 +26,4 @@ strCountDone:
 	syscall
 printDone:
 	pop	rbx
-	pop rbp
 	ret
