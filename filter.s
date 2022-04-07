@@ -1,13 +1,10 @@
 section .text
 ; argument: rdi is string for processing
-; return: rax
+; return: rax = 0, r12 is fitered string
 getFilteredData:
-	push r12
-	push rbp
-	push rbx ; len of filtered string
-	mov rbp, rdi
-	mov rbx, 0 ; rbx is len of final string
-	mov r12, 0 ; set initial memory at 0
+	mov rbp, rdi ; set rbp to memory of original string
+	mov rbx, 0 ; set len = 0
+	mov r12, rsi ; value to copy to
 filterCountLoop:
 	cmp byte[rbp], 0 ; compare to null
 	je filterDone
@@ -19,19 +16,17 @@ upLwrCase:
 	jle validAscii ; if in range it is valid character
 	jmp next ; continue iteration
 validAscii:
-	inc rbx
+	mov dx, byte[rbp]
+	mov byte[r12+rbx], dx; move character to r12
 	inc rbp
-	mov r12, byte[rbp] ; move character to r12
-	inc r12 ; move memory up by 1
+	inc rbx
 	jmp filterCountLoop
 next:
 	inc rbp
 	jmp filterCountLoop
 filterDone:
-	mov rax, r12 ; move result to rax to return
-	pop rbx
+	mov rax, 0
 	pop rbp
-	pop r12
 	ret ; return result string to rax
 
 

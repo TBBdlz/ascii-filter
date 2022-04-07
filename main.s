@@ -34,21 +34,14 @@ errMsgRead	db	"Error on reading file.", LF, NULL
 errMsgWrite	db	"Error on writing file.", LF, NULL
 errMsgArgs	db	"Invalid Args.", LF, NULL
 msgFinish	db	"Finish!!!!", LF, NULL
+lenRes		db	0
 BUFF_SIZE	equ	1023
 
 section .bss
 readBuffer		resb	BUFF_SIZE
 filteredData	resb	BUFF_SIZE
 
-; @TODO list
-; 1. Should add external assembly code
-; 2. Documentation is needed.
-; 3. Some function doesn't have body
-; 4. Need to create function to extract ascii character
-; 5. Add extern function here
-
 extern printString
-extern getFilteredData
 
 ; @TODO add documentation here ;
 section .text
@@ -91,8 +84,9 @@ closeInputFile:
 	
 processInputData:
 	mov rdi, readBuffer
+	mov rsi, filteredData
 	call getFilteredData ; rax is filtered data from the function
-	mov byte[filteredData], rax 
+	mov byte[lenRes], bl
 
 createOutputFile:
 	mov rax, SYS_create
@@ -106,8 +100,8 @@ createOutputFile:
 writeOutputFile:
 	mov rax, SYS_write
 	mov rdi, qword[fileDescriptor]
-	mov rsi, filteredData ; @TODO create function to extract data
-	mov rdx, len ; @TODO create function to get size of string(No symbol)
+	mov rsi, filteredData 
+	mov rdx, lenRes
 	syscall
 	cmp rax, 0
 	jl errorOnWrite
@@ -145,3 +139,30 @@ exit:
 	mov rax, SYS_exit
 	mov rdi, EXIT_SUCCESS
 	syscall
+
+getFilteredData:
+        mov rbp, rdi ; set rbp to memory of original string
+        mov rbx, 0 ; set len = 0
+filterCountLoop:
+        cmp byte[rbp], 0 ; compare to null
+        je filterDone
+        cmp byte[rbp], 32
+        jge upLwrCase
+        jmp next ; else continue the loop
+upLwrCase:
+        cmp byte[rbp], 126
+        jle validAscii ; if in range it is valid character
+        jmp next ; continue iteration
+validAscii:
+	mov al, byte[rbp]
+        mov byte[filteredData+rbx], al; move character to r12
+        inc rbp
+        inc rbx
+        jmp filterCountLoop
+next:
+        inc rbp
+        jmp filterCountLoop
+filterDone:
+        mov rax, 0
+        pop rbp
+        ret ; return result string to rax
