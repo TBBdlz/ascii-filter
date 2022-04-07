@@ -16,7 +16,8 @@ upLwrCase:
 	jle validAscii ; if in range it is valid character
 	jmp next ; continue iteration
 validAscii:
-	mov byte[r12+rbx], byte[rbp] ; move character to r12
+	mov dx, byte[rbp]
+	mov byte[r12+rbx], dx; move character to r12
 	inc rbp
 	inc rbx
 	jmp filterCountLoop
@@ -24,6 +25,7 @@ next:
 	inc rbp
 	jmp filterCountLoop
 filterDone:
+	mov rax, 0
 	pop rbp
 	ret ; return result string to rax
 
