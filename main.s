@@ -35,7 +35,7 @@ errMsgWrite	db	"Error on writing file.", LF, NULL
 errMsgArgs	db	"Invalid Args.", LF, NULL
 msgFinish	db	"Finish!!!!", LF, NULL
 lenRes		db	0
-BUFF_SIZE	equ	1023
+BUFF_SIZE	equ	2000
 
 section .bss
 readBuffer		resb	BUFF_SIZE
@@ -86,7 +86,7 @@ processInputData:
 	mov rdi, readBuffer
 	mov rsi, filteredData
 	call getFilteredData ; rax is filtered data from the function
-	mov byte[lenRes], bl
+	mov qword[lenRes], rbx
 
 createOutputFile:
 	mov rax, SYS_create
@@ -101,7 +101,7 @@ writeOutputFile:
 	mov rax, SYS_write
 	mov rdi, qword[fileDescriptor]
 	mov rsi, filteredData 
-	mov rdx, lenRes
+	mov rdx, qword[lenRes]
 	syscall
 	cmp rax, 0
 	jl errorOnWrite
@@ -141,26 +141,26 @@ exit:
 	syscall
 
 getFilteredData:
-        mov rbp, rdi ; set rbp to memory of original string
+        mov rcx, rdi ; set rcx to memory of original string
         mov rbx, 0 ; set len = 0
 filterCountLoop:
-        cmp byte[rbp], 0 ; compare to null
+        cmp byte[rcx], 0 ; compare to null
         je filterDone
-        cmp byte[rbp], 32
+        cmp byte[rcx], 32
         jge upLwrCase
         jmp next ; else continue the loop
 upLwrCase:
-        cmp byte[rbp], 126
+        cmp byte[rcx], 126
         jle validAscii ; if in range it is valid character
         jmp next ; continue iteration
 validAscii:
-	mov al, byte[rbp]
+	mov al, byte[rcx]
         mov byte[filteredData+rbx], al; move character to r12
-        inc rbp
+        inc rcx
         inc rbx
         jmp filterCountLoop
 next:
-        inc rbp
+        inc rcx
         jmp filterCountLoop
 filterDone:
         mov rax, 0
