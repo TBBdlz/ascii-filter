@@ -41,7 +41,7 @@ fileDescriptor	dq	0
 errMsgOpen	db	"Error on opening file.", LF, NULL
 errMsgRead	db	"Error on reading file.", LF, NULL
 errMsgWrite	db	"Error on writing file.", LF, NULL
-errMsgArgs	db	"Invalid Args.", LF, "you should ./execNameFile inputFile outputFile", NULL
+errMsgArgs	db	"Invalid Args.", LF, "you should ./execNameFile inputFile outputFile", LF, NULL
 msgFinish	db	"Finish!!!!", LF, NULL
 lenRes		db	0
 BUFF_SIZE	equ	2000
