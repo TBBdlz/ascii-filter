@@ -6,8 +6,6 @@
 ;	633040603-5 Thanawit Tapabud
 ;
 ;##############################################
-
-; @TODO add documentation here ;
 section .data
 LF			equ	10 ; line feed
 NULL		equ	0
@@ -52,7 +50,6 @@ filteredData	resb	BUFF_SIZE
 
 extern printString
 
-; @TODO add documentation here ;
 section .text
 global main
 main:
@@ -115,7 +112,7 @@ writeOutputFile:
 	cmp rax, 0
 	jl errorOnWrite
 
-closeOutputFile: ; @TODO duplicate code should create function to close file
+closeOutputFile:
 	mov rax, SYS_close
 	mov rdi, qword[fileDescriptor]
 	syscall
