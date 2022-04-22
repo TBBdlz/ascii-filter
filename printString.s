@@ -1,3 +1,12 @@
+;##############################################
+;
+;Member:
+;	633040174-2 Metee Yingyongwatthanakit
+;	633040423-7 Watsharapat Ritthisoonthorn
+;	633040603-5 Thanawit Tapabud
+;
+;##############################################
+
 ; printString call SYSTEM WRITE
 ; and print string to the user
 ; Argument: rdi is string argument

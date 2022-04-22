@@ -1,3 +1,12 @@
+;##############################################
+;
+;Member:
+;	633040174-2 Metee Yingyongwatthanakit
+;	633040423-7 Watsharapat Ritthisoonthorn
+;	633040603-5 Thanawit Tapabud
+;
+;##############################################
+
 ; @TODO add documentation here ;
 section .data
 LF			equ	10 ; line feed
@@ -32,7 +41,7 @@ fileDescriptor	dq	0
 errMsgOpen	db	"Error on opening file.", LF, NULL
 errMsgRead	db	"Error on reading file.", LF, NULL
 errMsgWrite	db	"Error on writing file.", LF, NULL
-errMsgArgs	db	"Invalid Args.", LF, NULL
+errMsgArgs	db	"Invalid Args.", LF, "you should ./execNameFile inputFile outputFile", NULL
 msgFinish	db	"Finish!!!!", LF, NULL
 lenRes		db	0
 BUFF_SIZE	equ	2000
@@ -53,10 +62,10 @@ main:
 	jne errorOnArgs
 
 	;get input file and output file
-	mov r12, qword[rsi + 8]
-	mov qword[inputFile], r12
-	mov r12, qword[rsi + 16]
-	mov qword[outputFile], r12
+	mov r8, qword[rsi + 8]
+	mov qword[inputFile], r8
+	mov r8, qword[rsi + 16]
+	mov qword[outputFile], r8
 
 ; Attempt to open input file - Use system service for opening file
 openInputFile:
@@ -155,7 +164,7 @@ upLwrCase:
         jmp next ; continue iteration
 validAscii:
 	mov al, byte[rcx]
-        mov byte[filteredData+rbx], al; move character to r12
+        mov byte[filteredData+rbx], al; move character to r8
         inc rcx
         inc rbx
         jmp filterCountLoop
